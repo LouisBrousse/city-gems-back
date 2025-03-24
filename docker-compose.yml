@@ -1,32 +1,33 @@
 services:
-  citygems_db:
+  citygems_db_secu_design:
     image: mysql:latest
-    container_name: mysqldb
+    container_name: mysqldb_secu_design
     volumes:
       - db_data:/var/lib/mysql
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: city_gems_db
     healthcheck:
       test: mysqladmin ping -h localhost --user=$$MYSQL_USER --password=$$MYSQL_ROOT_PASSWORD
       interval: 30s
       timeout: 12s
       retries: 10  
 
-  citygems_api:
+  citygems_api_secu_design:
     build: .
-    container_name: node_api
+    container_name: node_api_secu_design
     ports:
-      - "3004:3000"
+      - "3004:3004"
     environment:
-      DB_HOST: citygems_db
-      JWT_KEY: ${JWT_KEY}
-      JWT_REFRESH_KEY: ${JWT_KEY}
+      DATABASE_URL: mysql://root:root@citygems_db_secu_design:3306/city_gems_db
+      DB_HOST:  citygems_db_secu_design
+      JWT_KEY: root
+      JWT_REFRESH_KEY: root
       NODE_ENV: development
     depends_on:
-      - citygems_db 
+      - citygems_db_secu_design
 
 volumes:
   db_data:
