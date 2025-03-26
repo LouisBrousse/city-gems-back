@@ -34,15 +34,12 @@ export const createAttraction = async (req: Request, res: Response) => {
     const imageUrls = (req.files as Express.Multer.File[]).map(file => `/uploads/${path.basename(file.path)}`) || [];
 
  
-    const { name, address, category_id, budget, website_link } = req.body;
-
-    const categoryIdInt = parseInt(category_id, 10);
+    const { name, address, budget, website_link } = req.body;
 
     const attraction = await prisma.attraction.create({
       data: {
         name,
         address,
-        category_id: categoryIdInt,
         budget,
         website_link: website_link || null,
         images: {

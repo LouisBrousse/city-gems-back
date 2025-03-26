@@ -6,7 +6,6 @@ import { PrismaClient } from "@prisma/client";
 import authRoutes from './routes/authRoutes';
 import userRoutes from './routes/userRoutes';
 import attractionRoutes from './routes/attractionRoutes';
-import attractionCategoryRoutes from './routes/attractionCategoryRoutes';
 import favouriteRoutes from './routes/favouriteRoutes';
 import { authenticateUser } from './middleware/auth';
 
@@ -33,7 +32,6 @@ app.use(cors(corsOptions));
 app.use('/api', authRoutes);
 app.use('/api', userRoutes);
 app.use('/api',authenticateUser, attractionRoutes);
-app.use('/api', attractionCategoryRoutes);
 app.use('/api', authenticateUser, favouriteRoutes);
 
 app.get('/', (req: Request, res: Response) => {
