@@ -12,7 +12,7 @@ RUN yarn install
 COPY . .
 
 # Generate Prisma client
-RUN yarn prisma generate --schema=src/models
+RUN yarn prisma generate --schema=src/models/
 
 # Build the project
 RUN yarn build
