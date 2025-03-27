@@ -4,6 +4,11 @@ import { upload } from '../utils/multerConfig';
 import path from 'path';
 
 export const getAttractions = async (req: Request, res: Response) => {
+  const token = req.headers.authorization;
+  const userId = req.body.userId; // Normally set by authenticateUser
+
+  console.log('Token:', token);
+  console.log('User ID:', userId);
     try {
         const attractions = await prisma.attraction.findMany({
             include: {
