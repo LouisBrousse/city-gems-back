@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../server';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { validateToken, revokeToken, isTokenRevoked } from '../utils/token';
+import { revokeToken } from '../utils/token';
 import { generateTokensMiddleware } from '../middleware/token';
 
 export const registerUser = async (req: Request, res: Response) => {
@@ -19,16 +17,15 @@ export const registerUser = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Email already in use' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const user = await prisma.user.create({
       data: {
         firstName,
         lastName,
         email,
-        password: hashedPassword,
+        password,
       },
     });
+    console.log(user);
 
     return res.status(201).json(user);
   } catch (error) {
@@ -51,9 +48,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
       return res.status(400).json({ error: 'Invalid email or password' });
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
-
-    if (!passwordMatch) {
+    if (user.password !== password) {
       return res.status(400).json({ error: 'Invalid email or password' });
     }
 
