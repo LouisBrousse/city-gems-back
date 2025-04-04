@@ -15,12 +15,12 @@ if (!jwtRefreshKey) {
 
 
 export const generateAccessToken = (userId: number) => {
-  return jwt.sign({ userId }, jwtKey, { expiresIn: '5m' });
+  return jwt.sign({ userId }, jwtKey);
 };
 
 
 export const generateRefreshToken = (userId: number, jti: string) => {
-  return jwt.sign({ userId, jti }, jwtRefreshKey, { expiresIn: '8h' });
+  return jwt.sign({ userId, jti }, jwtRefreshKey);
 };
 
 
