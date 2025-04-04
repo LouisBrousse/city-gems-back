@@ -5,6 +5,11 @@ import jwt from 'jsonwebtoken';
 import { validateToken, revokeToken, isTokenRevoked } from '../utils/token';
 import { generateTokensMiddleware } from '../middleware/token';
 
+const isPasswordStrong = (password: string): boolean => {
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  return passwordRegex.test(password);
+};
+
 export const registerUser = async (req: Request, res: Response) => {
   try {
     const { firstName, lastName, email, password } = req.body;
@@ -13,8 +18,16 @@ export const registerUser = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
-    const userExists = await prisma.user.findUnique({ where: { email } });
+    console.log("Received password:", password); // Debugging
 
+    if (!isPasswordStrong(password)) {
+      console.log("Weak password detected, rejecting request."); // Debugging
+      return res.status(400).json({
+        error: 'Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.',
+      });
+    }
+
+    const userExists = await prisma.user.findUnique({ where: { email } });
     if (userExists) {
       return res.status(400).json({ error: 'Email already in use' });
     }
@@ -30,12 +43,14 @@ export const registerUser = async (req: Request, res: Response) => {
       },
     });
 
-    return res.status(201).json(user);
+    return res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     console.error('Error details:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+
 
 export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
