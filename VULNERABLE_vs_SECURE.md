@@ -25,9 +25,10 @@ Mots de passe hashés à l'aide de la librairie `bcrypt`.
 ### 3️⃣ SQL Injections  
 
 🚨 **Vulnerable:**
-*(Describe how SQL injection is possible here)*  
+Requête SQL brute qui permet une injection SQL dans le login. 
+Placer ' OR '1'='1' -- dans l'input email du login permet donc de se connecter sans credentials valides
 ✅ **Secure:**
-*(Describe how SQL injection is mitigated here)*  
+L'utilisation d'un ORM (prisma) permet de sécuriser les interactions avec la base de données en évitant les injections SQL grâce à l'utilisation de requêtes préparées et de paramètres bindés, ce qui empêche l'exécution de code malveillant injecté par un utilisateur.
 
 ---
 
