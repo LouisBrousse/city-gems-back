@@ -42,19 +42,19 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
       return res.status(400).json({ error: 'All fields are required' });
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    // ❌ WARNING: Vulnerable to SQL injection (for testing only)
+    const query = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
+    const user: any[] = await prisma.$queryRawUnsafe(query);
 
-    if (!user) {
+    if (!user || user.length === 0) {
       return res.status(400).json({ error: 'Invalid email or password' });
     }
 
-    if (user.password !== password) {
-      return res.status(400).json({ error: 'Invalid email or password' });
-    }
+    const foundUser = user[0];
 
-    req.body.userId = user.id;
-    req.body.firstName = user.firstName;
-    req.body.lastName = user.lastName;
+    req.body.userId = foundUser.id;
+    req.body.firstName = foundUser.firstName;
+    req.body.lastName = foundUser.lastName;
 
     return generateTokensMiddleware(req, res);
   } catch (error) {
